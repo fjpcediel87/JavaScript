@@ -1,0 +1,305 @@
+** start of script.js **
+
+const addBkBtn = document.getElementById("add-bookmark-button");
+const goBkBtn = document.getElementById("close-form-button");
+const addBkBtn2 = document.getElementById("add-bookmark-button-form");
+const goBkBtn2 = document.getElementById("close-list-button");
+const nameInput = document.getElementById("name");
+const ddBtn = document.getElementById("category-dropdown");
+const urlInput = document.getElementById("url");
+const mainS = document.getElementById("main-section");
+const formS = document.getElementById("form-section");
+const bListS = document.getElementById("bookmark-list-section");
+const vwCatBtn = document.getElementById("view-category-button");
+const delBtn = document.getElementById("delete-bookmark-button");
+const bookmarks = [{
+  name: "", category: "", url: ""
+}]
+//functions 
+
+const getBookmarks =  () => {
+let array
+try {
+  array = JSON.parse(localStorage.getItem("bookmarks"));
+}
+catch {
+  array = []
+}
+
+  if (array == null || !Array.isArray(array)) {
+    return []
+  } else if (array.some( x => x.name == undefined || x.category == undefined || x.url == undefined)) {
+    return []
+  } else {
+    return array
+  }
+}
+
+const displayOrCloseForm = () => {
+  mainS.classList.toggle("hidden");
+  formS.classList.toggle("hidden");
+}
+const displayOrHideCategory = () => {
+  mainS.classList.toggle("hidden");
+  bListS.classList.toggle("hidden");
+}
+const updateBookMarks = () => {
+  const array = getBookmarks();
+  const obj = {
+    name: nameInput.value,
+    category: ddBtn.value,
+    url: urlInput.value
+  }
+  array.push(obj);
+  localStorage.setItem("bookmarks", JSON.stringify(array));
+  reset()
+}
+function reset () {
+  nameInput.value = "";
+  urlInput.value = "";
+  displayOrCloseForm();
+}
+
+function addBkOpen () { 
+  const catName = formS.querySelector(".category-name");  
+  catName.innerText = ddBtn.value;
+  displayOrCloseForm(); 
+}
+function vwCatOpen () {
+const catList = document.getElementById("category-list");
+const catName = bListS.querySelector(".category-name");
+  catName.innerText = ddBtn.value;
+  catList.innerHTML = catListFilter(ddBtn.value)
+  displayOrHideCategory(); 
+}
+function catListFilter (cat) {
+  const array = getBookmarks();
+  console.log(array)
+  const fil = array.filter( x => x.category == cat);
+  if (fil.length == 0) {
+    return '<p>No Bookmarks Found</p>'
+  } else {
+    let exp = ""
+    fil.forEach( x => {exp += `<div class="blist"><input type="radio" id="${x.name}"  value="${x.name}" name="radioBtns"><label for="${x.name}"><a href="${x.url}">${x.name}</a></label></div>`});
+    return exp
+  }
+}
+function deletion () {  
+  const cat = ddBtn.value;
+  const array = getBookmarks();
+  console.log(array);
+  
+  const listArray = document.querySelectorAll('input[name = "radioBtns"]');
+  let itemToBeDel ="";
+  for (const e of listArray){
+    if(e.checked) {
+      itemToBeDel = e.id;
+    }
+  }
+  console.log(itemToBeDel);
+  console.log(cat)
+  const index = array.findIndex( x => x.name === itemToBeDel && x.category === cat)
+  array.splice(index, 1)
+  localStorage.setItem("bookmarks",JSON.stringify(array));
+  const catList = document.getElementById("category-list");
+  catList.innerHTML =
+  catListFilter(cat);
+}
+
+
+//addEventListeners
+addBkBtn.addEventListener("click", addBkOpen);
+addBkBtn2.addEventListener("click", updateBookMarks);
+goBkBtn.addEventListener("click", () => {displayOrCloseForm()});
+goBkBtn2.addEventListener("click", () => {displayOrHideCategory()});
+vwCatBtn.addEventListener("click",vwCatOpen);
+delBtn.addEventListener("click", ()=> {deletion()})
+
+
+
+
+** end of script.js **
+
+** start of index.html **
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.0">
+    <title>Bookmark Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main>
+        <section id="main-section">
+            <h1>Bookmark Manager</h1>           
+            <div id="dropdown">
+                <label for="category-dropdown">Select a category:</label>
+                <select id="category-dropdown" name="options">
+                    <option value="news" selected>News</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="work">Work</option>
+                    <option value="miscellaneous">Miscellaneous</option>
+                </select>
+            </div>
+            <div id="buttons">
+                <button type="button" id="view-category-button">View Category</button>
+                <button type="button" id="add-bookmark-button">Add Bookmark</button>
+            </div>
+        </section>
+
+        <section id="form-section" class="hidden">
+            <form>
+                <h2 class="category-name"></h2>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name">
+                </div>
+                <div>
+                    <label for="url">URL:</label>
+                    <input type="text" id="url">
+                </div>
+                <div>
+                    <button type="button" id="close-form-button">Go Back</button>
+                    <button type="button" id="add-bookmark-button-form">Add Bookmark</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="bookmark-list-section" class="hidden">
+            <h2 class="category-name"></h2>
+            <div id="category-list">            
+
+            </div>     
+            
+            <div>
+                <button type="button" id="close-list-button">Go Back</button>
+                <button type="button" id="delete-bookmark-button">Delete Bookmark</button>
+            </div>
+        </section>
+
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+** end of index.html **
+
+** start of styles.css **
+
+:root {
+  --light-grey: #f5f6f7;
+  --dark-grey: #0a0a23;
+  --yellow: #f1be32;
+  --golden-yellow: #feac32;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+}
+
+body {
+  background-color: var(--dark-grey);
+}
+
+.hidden {
+  display: none;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+select,
+input,
+label {
+  margin-left: 10px;
+}
+
+div {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+.blist {
+  padding: 10px;
+  display: flex;
+  justify-content: 
+  flex-start;
+  color: red
+}
+
+.close-form-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+h1, h2 {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#category-list {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: var(--light-grey);
+  align-self: center;
+  width: 80%;
+  margin-top: 15px;
+  border-radius: 10px;
+}
+
+#category-list,
+h1,
+h2,
+label {
+  color: var(--light-grey);
+}
+
+#category-list p {
+  color: var(--dark-grey);
+}
+
+button {
+  cursor: pointer;
+  padding: 5px;
+  width: 100px;
+  margin: 10px;
+  color: var(--dark-grey);
+  background-color: var(--golden-yellow);
+  background-image: linear-gradient(#fecc4c, #ffac33);
+  border-color: var(--golden-yellow);
+  border-width: 3px;
+}
+
+button:hover {
+  background-image: linear-gradient(#ffcc4c, #f89808);
+}
+
+section {
+  margin-top: 60px;
+  border: 2px solid var(--golden-yellow);
+  width: fit-content;
+  border-radius: 10px;
+}
+
+** end of styles.css **
+
