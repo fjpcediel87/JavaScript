@@ -1,0 +1,61 @@
+** start of script.js **
+
+class BankAccount {
+  constructor () {
+    this.balance = 0;
+    this.transactions = [];
+  } 
+  deposit (num) {
+    if (num > 0 ){
+      const obj = {type: 'deposit', amount: num};
+      this.transactions.push(obj);
+      this.balance += num;
+      return `Successfully deposited $${num}. New balance: $${this.balance}`
+    } else {
+      return "Deposit amount must be greater than zero."
+    }
+  }
+  withdraw (num) {
+    const bal2 = this.balance - num;
+    const obj = {type: 'withdraw', amount: num}
+    if (num > 0 && bal2 > 0){
+      this.transactions.push(obj);
+      this.balance = bal2;
+      return `Successfully withdrew $${num}. New balance: $${bal2}`
+    } else {
+      return "Insufficient balance or invalid amount."
+    }
+  }
+  checkBalance () {
+    return `Current balance: $${this.balance}`
+  }
+  listAllDeposits () {
+    let result = "Deposits: ";
+    const dep = this.transactions.filter( x => x.type === "deposit");
+    dep.forEach(({amount}) => result += `${amount},`);
+    if (dep.length) {result = result.slice(0,result.length-1)}
+    return result
+  }
+  listAllWithdrawals () {
+    let result = "Withdrawals: ";
+    const dep = this.transactions.filter( x => x.type === "withdraw");
+    dep.forEach(({amount}) => result += `${amount},`);
+    if (dep.length) {result = result.slice(0,result.length-1)}
+    return result
+  }
+}
+const myAccount = new BankAccount;
+myAccount.deposit(100);
+myAccount.deposit(100);
+myAccount.deposit(100);
+myAccount.withdraw(100);
+myAccount.withdraw(90);
+console.log(myAccount.checkBalance());
+console.log(myAccount.listAllDeposits());
+console.log(myAccount.listAllWithdrawals())
+
+
+
+
+** end of script.js **
+
