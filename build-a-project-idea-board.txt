@@ -1,0 +1,55 @@
+** start of script.js **
+
+const projectStatus = {
+  PENDING: {description: "Pending Execution"}, 
+  SUCCESS: {description: "Executed Successfully"}, 
+  FAILURE: {description: "Execution Failed"}
+}
+
+class ProjectIdea {
+  constructor (title, description) {
+    this.title = title;
+    this.description = description;
+    this.status = projectStatus.PENDING
+    
+  }
+
+  updateProjectStatus(newStatus) {
+    this.status = newStatus;
+  }
+}
+class ProjectIdeaBoard {
+  constructor (title) {
+    this.title = title;
+    this.ideas = [];
+  }
+  pin (inst) {
+    this.ideas.push(inst);
+    //console.log(this.ideas)
+    return this.ideas
+  }
+  unpin (inst){
+    try {
+      const index = this.ideas.findIndex(({title, description, status}) => inst.title == title && inst.description == description && inst.status == status);
+      this.ideas.splice(index, 1);
+      return this.ideas
+    }
+    catch {
+      console.log("Instance not found")    
+    }
+  }
+  count () {
+    return this.ideas.length;
+  }
+  formatToString () {
+    let lines = `${this.title} has ${this.count()} idea(s)\n`
+    this.ideas.forEach(({title, description, status}) => {lines += `${title} (${Object.values(status)}) - ${description}\n`});
+    return lines
+
+  }
+}
+
+
+
+** end of script.js **
+
