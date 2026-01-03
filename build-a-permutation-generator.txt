@@ -1,0 +1,24 @@
+** start of script.js **
+
+function permuteString (str, pref = "", arr = []){  
+  if (!str.length){
+    if (!arr.some( x => x === pref)) {
+    arr.push(pref);
+    } 
+  } else {
+      const strArr = str.split("");      
+      strArr.forEach((x,i) => {;
+      console.log("this is before str: "+str)         
+        permuteString ( str.replace(x, ""), pref + x, arr);
+        console.log("this is pref: "+pref)        
+      })    
+  }  
+  return arr
+}
+console.log(permuteString("fcc"));
+
+
+
+
+** end of script.js **
+
