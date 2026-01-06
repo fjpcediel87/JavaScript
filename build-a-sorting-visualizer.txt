@@ -1,0 +1,177 @@
+** start of index.html **
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sorting Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main>
+        <div id="array-container">
+            <div id="starting-array"></div>
+        </div>
+        <div id="btn-container">
+            <button id="generate-btn" type="button">Generate Array</button>
+            <button id="sort-btn" type="button" hidden>Sort Array</button>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+** end of index.html **
+
+** start of styles.css **
+
+* {
+    box-sizing: border-box;
+}
+
+main {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#array-container {
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 2px;
+
+}
+
+#array-container>div {
+    min-width: 8rem;
+    height: 2rem;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    border-radius: 10px;
+    margin-bottom: 0.2rem;
+    border: 2px solid darkgray;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#starting-array {
+    border: 4px solid darkblue !important;
+}
+.final-array {
+    border: 4px solid green !important;
+}
+
+#btn-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+button {
+    padding: 2px;
+    margin: 5px;
+}
+
+span {
+    border-radius: 2px;
+    padding: 0.5px;
+    margin: 0
+}
+
+@media (min-width: 430px) {
+  #array-container>div {
+    min-width: 12rem;    
+  }
+  span {
+    padding: 1px;
+    margin: 1px;
+  }
+}
+
+** end of styles.css **
+
+** start of script.js **
+
+const generateElement = () => {
+  return Math.floor(Math.random()*100) + 1;
+};
+const generateArray = () => {
+  let array = [];
+  for (let i=0; i < 5 ; ++i){
+    array.push(generateElement())}
+  return array
+};
+const generateContainer = () => {
+  return  document.createElement("div");
+};
+const fillArrContainer = (htmlEl, arr1) => {
+  htmlEl.innerHTML = "";
+  arr1.forEach(x => {
+    htmlEl.innerHTML += `<span>${x}</span>`
+  })
+};
+const isOrdered = (int1, int2) => {
+  return int1 <= int2;
+}
+const swapElements = (arr, index) => {
+  const num1 = arr[index];
+  const num2 = arr[index + 1];
+  if(!isOrdered(num1,num2)){
+    arr[index+1]=num1;
+    arr[index] = num2
+  }
+  return arr
+}
+const highlightCurrentEls = (htmlEl, index) => {
+  [index, index + 1].forEach(x => htmlEl.children[x].style.border = '1px dashed red')
+};
+const genBtn = document.getElementById("generate-btn");
+const stArray = document.getElementById("starting-array");
+const sortBtn = document.getElementById("sort-btn");
+const arrCont = document.getElementById("array-container");
+let genArray = [];
+genBtn.addEventListener("click", () => {
+  genArray = generateArray();
+  fillArrContainer(stArray, genArray);
+  const itemL = arrCont.children.length;
+  if ( itemL > 1) {
+    for (let i = itemL - 1; i > 0; --i){
+      arrCont.children[i].remove();      
+    }
+  }
+  sortBtn.hidden= false;
+})
+function bubbleSortAlg () {
+  let chkArray = new Array(4);
+  do {
+    for (let i=0; i < 4; ++i){
+      const divC = generateContainer();
+      fillArrContainer(divC, genArray);
+      highlightCurrentEls(divC, i);
+      arrCont.appendChild(divC);
+      chkArray[i] = isOrdered(genArray[i], genArray[i + 1])
+      swapElements(genArray, i);
+    }
+  } while(!chkArray.every(x => x== true));
+  highlightCurrentEls(stArray, 0);
+  arrCont.children[1].remove();
+  const finalDiv = generateContainer();
+  fillArrContainer(finalDiv, genArray);    
+  arrCont.appendChild(finalDiv);
+  finalDiv.classList.add("final-array");  
+  sortBtn.hidden= true;
+}
+sortBtn.addEventListener("click", () => {bubbleSortAlg()})
+
+
+
+** end of script.js **
+
