@@ -1,0 +1,170 @@
+** start of index.html **
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div id="main-box">
+      <img id="weather-icon" src="" alt=""/>
+      <div id="text-box">
+      <p id="main-temperature"></p>
+      <p id="feels-like"></p>
+      <p id="humidity"></p>
+      <p id="wind"></p>
+      <p id="wind-gust"></p>
+      <p id="weather-main"></p>
+      <p id="location"></p>
+      </div>
+
+    </div>
+    <div id="button-box">
+    <select id="cities-dd">
+      <option value=""></option>
+      <option value="paris">Paris</option>
+      <option value="london">London</option>
+      <option value="tokyo">Tokyo</option>
+      <option value="los angeles">Los Angeles</option>
+      <option value="chicago">Chicago</option>
+      <option value="new york">New York</option>
+    </select>
+    <button id="get-weather-btn">Get Weather</button>
+    </div>
+
+
+
+
+
+  <script src="script.js" async></script>
+  </body>
+</html>
+
+** end of index.html **
+
+** start of script.js **
+
+const ddBtn = document.getElementById("cities-dd");
+const gwBtn = document.getElementById("get-weather-btn");
+const showP = document.querySelectorAll("p");
+const mb = document.getElementById("main-box");
+const tempText = document.getElementById('main-temperature');
+const fLText = document.getElementById('feels-like');
+const humText = document.getElementById('humidity');
+const windText = document.getElementById('wind');
+const windGustText = document.getElementById('wind-gust');
+const wText = document.getElementById('weather-main');
+const locText = document.getElementById('location');
+
+
+
+/*async function getWeather (city) {
+  const url = `https://weather-proxy.freecodecamp.rocks/api/city/${city}`;
+  
+  return fetch(url)
+  .then(response => response.json())
+  .catch( (error) => {
+  console.log("Error fetching the data: ", error);
+  alert("Something went wrong, please try again later")
+  }
+  )
+}*/
+const getWeather = async (city) => {
+  try {
+    const url = `https://weather-proxy.freecodecamp.rocks/api/city/${city}`;
+    let response = await fetch(url)
+    let data = await response.json();
+    return data
+  } catch (error) {
+    alert("Something went wrong, please try again later")
+    console.log(error)
+  }
+}
+
+
+async function showWeather (city) {
+  
+  const icon = document.getElementById("weather-icon");
+  getWeather(city)
+  .then( (obj) => {
+    console.log(obj)
+    const wth = [
+      obj.weather[0].icon,
+      obj.main.temp,
+      obj.main.feels_like,
+      obj.main.humidity,
+      obj.wind.speed,
+      obj.wind.gust,
+      obj.weather[0].main,
+      obj.name
+    ]
+    console.log(wth)
+   
+    
+    icon.src = wth[0];
+    tempText.textContent = wth[1] !== undefined? wth[1] + "° C":"N/A";
+    fLText.textContent = wth[2] !== undefined? "Feels Like: "+ wth[2] + "° C":"Feels Like: N/A";
+    humText.textContent = wth[3] !== undefined? "Humidity: "+ wth[3] + "%":"Humidity: N/A";
+    windText.textContent = wth[4] !== undefined? "Wind: "+ wth[4] + " m/s":"Wind: N/A";
+    windGustText.textContent = wth[5] !== undefined? "Gusts: "+ wth[5] + " m/s":"Gusts: N/A";
+    wText.textContent = wth[6] !== undefined? wth[6]: "N/A";
+    locText.textContent = wth[7] !== undefined? wth[7]: "N/A";
+  
+  })
+  .catch((error) =>  {
+    console.log("error", error);
+    alert('Something went wrong, please try again later')
+    }) 
+ 
+}
+//addEventListeners
+gwBtn.addEventListener("click", () => {  
+  //if (ddBtn.value != "") {showWeather(ddBtn.value)} 
+  showWeather(ddBtn.value)
+})
+
+
+
+** end of script.js **
+
+** start of styles.css **
+
+#main-box {
+  width: 50vw;
+  height: 60vh;
+  border: 5px double purple;
+  
+}
+#text-box {
+  height: 80%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto; 
+  justify-content: auto;
+  align-items: auto
+}
+#button-box{
+  display: flex;
+  width: 50vw;
+  height: 5vh;
+  padding: 10px;
+  justify-content: space-evenly
+}
+img {
+  background: gray;
+  width: 40px;
+  height: 40px;
+}
+p {  
+  background-color: lightgray;
+  width: 100px;
+  height: 30px;
+  padding: 5px;
+  margin: 20px 15px;
+}
+
+** end of styles.css **
+
